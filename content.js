@@ -51,15 +51,14 @@ function scrapeData() {
 }
 
 function injectData() {
-    // Проверка настройки новостей
     chrome.storage.local.get(['skyData', 'showStats', 'showNews'], (res) => {
-        // Логика новостей
+        // 1. Логика новостей
         const newsBlock = document.querySelector('student-dashboard-news');
         if (newsBlock) {
             newsBlock.style.display = (res.showNews !== false) ? 'block' : 'none';
         }
 
-        // Логика плашек
+        // 2. Логика плашек
         if (!location.href.includes('/student') || isProcessing) return;
         
         const data = res.skyData;
@@ -71,21 +70,28 @@ function injectData() {
         }
 
         isProcessing = true;
+        // Ищем все заголовки предметов
         document.querySelectorAll('.speech-title, .s-speech-title, .subject-title, .title, .name').forEach(el => {
             const name = el.innerText.trim();
+            
+            // КРИТИЧЕСКИЙ ФИКС: Если плашка уже есть в этом контейнере, пропускаем, чтобы не дублировать
+            if (el.parentElement.querySelector('.sky-info-row')) return;
+
             if (data[name]) {
-                let row = el.parentElement.querySelector('.sky-info-row') || document.createElement('div');
+                const row = document.createElement('div');
                 row.className = 'sky-info-row';
                 row.style.cssText = 'margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; pointer-events: none;';
-                el.parentElement.appendChild(row);
-                row.innerHTML = '';
+                
                 Object.keys(data[name]).forEach(type => {
                     const b = document.createElement('div');
                     const val = data[name][type];
+                    // Стили в темной теме
                     b.style.cssText = `background: rgba(50, 145, 255, 0.1); color: ${val <= 0 ? '#2ecc71' : '#FFFFFF'}; padding: 4px 10px; border-radius: 8px; font-size: 11px; border: 1px solid ${val <= 0 ? '#2ecc71' : 'rgba(255,255,255,0.15)'}; font-weight: bold;`;
                     b.innerText = val <= 0 ? `✅ ${type}` : `${type}: ${val}`;
                     row.appendChild(b);
                 });
+                
+                el.parentElement.appendChild(row);
             }
         });
         isProcessing = false;
@@ -99,4 +105,5 @@ chrome.runtime.onMessage.addListener((msg) => {
 
 chrome.storage.local.get(['selectedFont'], (res) => applyFont(res.selectedFont));
 setInterval(scrapeData, 2500);
+
 setInterval(injectData, 1000); // Чуть чаще для отзывчивости интерфейса
