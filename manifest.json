@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "SkyStat",
+  "version": "1.7",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["https://avatar.skyeng.ru/*"],
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://avatar.skyeng.ru/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
