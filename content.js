@@ -74,25 +74,28 @@ function injectData() {
         document.querySelectorAll('.speech-title, .s-speech-title, .subject-title, .title, .name').forEach(el => {
             const name = el.innerText.trim();
             
-            // КРИТИЧЕСКИЙ ФИКС: Если плашка уже есть в этом контейнере, пропускаем, чтобы не дублировать
+            // 1. Проверяем, есть ли данные и ВИДИМ ли элемент на странице (убирает баг внизу)
+            if (!data[name] || el.offsetParent === null) return;
+
+            // 2. Проверяем, нет ли уже плашек
             if (el.parentElement.querySelector('.sky-info-row')) return;
 
-            if (data[name]) {
-                const row = document.createElement('div');
-                row.className = 'sky-info-row';
-                row.style.cssText = 'margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; pointer-events: none;';
-                
-                Object.keys(data[name]).forEach(type => {
-                    const b = document.createElement('div');
-                    const val = data[name][type];
-                    // Стили в темной теме
-                    b.style.cssText = `background: rgba(50, 145, 255, 0.1); color: ${val <= 0 ? '#2ecc71' : '#FFFFFF'}; padding: 4px 10px; border-radius: 8px; font-size: 11px; border: 1px solid ${val <= 0 ? '#2ecc71' : 'rgba(255,255,255,0.15)'}; font-weight: bold;`;
-                    b.innerText = val <= 0 ? `✅ ${type}` : `${type}: ${val}`;
-                    row.appendChild(b);
-                });
-                
-                el.parentElement.appendChild(row);
-            }
+            // 3. Исключаем добавление в технические контейнеры (фикс для нижнего края)
+            if (el.parentElement.classList.contains('content') || el.parentElement.tagName === 'BODY') return;
+
+            const row = document.createElement('div');
+            row.className = 'sky-info-row';
+            row.style.cssText = 'margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; pointer-events: none;';
+            
+            Object.keys(data[name]).forEach(type => {
+                const b = document.createElement('div');
+                const val = data[name][type];
+                b.style.cssText = `background: rgba(50, 145, 255, 0.1); color: ${val <= 0 ? '#2ecc71' : '#FFFFFF'}; padding: 4px 10px; border-radius: 8px; font-size: 11px; border: 1px solid ${val <= 0 ? '#2ecc71' : 'rgba(255,255,255,0.15)'}; font-weight: bold;`;
+                b.innerText = val <= 0 ? `✅ ${type}` : `${type}: ${val}`;
+                row.appendChild(b);
+            });
+            
+            el.parentElement.appendChild(row);
         });
         isProcessing = false;
     });
@@ -105,5 +108,4 @@ chrome.runtime.onMessage.addListener((msg) => {
 
 chrome.storage.local.get(['selectedFont'], (res) => applyFont(res.selectedFont));
 setInterval(scrapeData, 2500);
-
 setInterval(injectData, 1000); // Чуть чаще для отзывчивости интерфейса
