@@ -17,4 +17,4 @@
 4. Нажмите **Загрузить распакованное расширение** и выберите папку с файлами.
 
 ---
-[![Star History Chart](https://api.star-history.com/svg?repos=sploofer1/SkyStat&type=Date&theme=dark)](https://star-history.com/#sploofer1/твой_репозиторий&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=sploofer1/SkyStat&type=Date&theme=dark)](https://star-history.com/#sploofer1/SkyStat&Date)
