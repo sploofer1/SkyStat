@@ -10,6 +10,11 @@ const styleTag = document.createElement('style');
 styleTag.id = "sky-font-style";
 document.head.appendChild(styleTag);
 
+// СТИЛИ ДЛЯ СКРЫТИЯ РОДНЫХ ЭЛЕМЕНТОВ
+const nativeStyleTag = document.createElement('style');
+nativeStyleTag.id = "sky-native-style";
+document.head.appendChild(nativeStyleTag);
+
 function applyFont(fontName) {
     if (!fontName || fontName === 'inherit') {
         styleTag.innerHTML = '';
@@ -51,14 +56,19 @@ function scrapeData() {
 }
 
 function injectData() {
-    chrome.storage.local.get(['skyData', 'showStats', 'showNews'], (res) => {
-        // 1. Логика новостей
+    // ИСПРАВЛЕНО: Добавил 'showNative' в массив ключей
+    chrome.storage.local.get(['skyData', 'showStats', 'showNews', 'showNative'], (res) => {
+        // 1. Управление видимостью оригинальных кружков (классы .debts-badge)
+        // ИСПРАВЛЕНО: Добавил эту логику
+        nativeStyleTag.innerHTML = (res.showNative === false) ? '.debts-badge { display: none !important; }' : '';
+
+        // 2. Логика новостей
         const newsBlock = document.querySelector('student-dashboard-news');
         if (newsBlock) {
             newsBlock.style.display = (res.showNews !== false) ? 'block' : 'none';
         }
 
-        // 2. Логика плашек
+        // 3. Логика плашек
         if (!location.href.includes('/student') || isProcessing) return;
         
         const data = res.skyData;
@@ -70,17 +80,10 @@ function injectData() {
         }
 
         isProcessing = true;
-        // Ищем все заголовки предметов
         document.querySelectorAll('.speech-title, .s-speech-title, .subject-title, .title, .name').forEach(el => {
             const name = el.innerText.trim();
-            
-            // 1. Проверяем, есть ли данные и ВИДИМ ли элемент на странице (убирает баг внизу)
             if (!data[name] || el.offsetParent === null) return;
-
-            // 2. Проверяем, нет ли уже плашек
             if (el.parentElement.querySelector('.sky-info-row')) return;
-
-            // 3. Исключаем добавление в технические контейнеры (фикс для нижнего края)
             if (el.parentElement.classList.contains('content') || el.parentElement.tagName === 'BODY') return;
 
             const row = document.createElement('div');
