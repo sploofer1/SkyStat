@@ -71,13 +71,7 @@ Skyeng и Skypro - хорошие платформы, но в них есть в
 
 ## Star History
 
-<a href="https://www.star-history.com/#sploofer1/SkyStat&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=sploofer1/SkyStat&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=sploofer1/SkyStat&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=sploofer1/SkyStat&type=date&legend=top-left" />
- </picture>
-</a>
+[![Star History Chart](https://api.star-history.com/svg?repos=sploofer1/SkyPlus&type=date&theme=dark)](https://star-history.com/#sploofer1/SkyPlus&type=date)
 
 ---
 
