@@ -4,77 +4,75 @@ document.addEventListener('DOMContentLoaded', () => {
     const fontSel = document.getElementById('fontSelect');
     const toggleStats = document.getElementById('toggleStats');
     const toggleNews = document.getElementById('toggleNews');
-    // ИСПРАВЛЕНО: Добавил эту строку
     const toggleNative = document.getElementById('toggleNative');
+    const toggleRabbit = document.getElementById('toggleRabbit');
     const status = document.getElementById('status');
+    const lastUpdatedEl = document.getElementById('lastUpdated');
 
-    // Вставка версии из manifest.json
+    // Версия
     const verSpan = document.getElementById('ver');
-    if (verSpan) {
-        verSpan.innerText = `v${chrome.runtime.getManifest().version}`;
-    }
+    if (verSpan) verSpan.innerText = `v${chrome.runtime.getManifest().version}`;
 
-    // ИСПРАВЛЕНО: Добавил 'showNative' в массив ключей
-    // Загрузка настроек
-    chrome.storage.local.get(['selectedFont', 'showStats', 'showNews', 'showNative'], (res) => {
+    // Загрузка настроек + время последнего обновления
+    chrome.storage.local.get(['selectedFont', 'showStats', 'showNews', 'showNative', 'showRabbit', 'lastUpdated'], (res) => {
         if (res.selectedFont) fontSel.value = res.selectedFont;
         toggleStats.checked = res.showStats !== false;
-        toggleNews.checked = res.showNews !== false; 
-        // ИСПРАВЛЕНО: Добавил эту строку
+        toggleNews.checked = res.showNews !== false;
         toggleNative.checked = res.showNative !== false;
+        toggleRabbit.checked = res.showRabbit !== false;
+        showLastUpdated(res.lastUpdated);
     });
 
-    // Очистка данных без подтверждения + автоматическая перезагрузка
-    clearBtn.onclick = () => {
-        //  Очищаем хранилище
-        chrome.storage.local.set({ 'skyData': {} }, () => {
-            
-            //  Ищем активную вкладку и перезагружаем её
-            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                if (tabs[0]) {
-                    chrome.tabs.reload(tabs[0].id);
-                }
-            });
+    function showLastUpdated(ts) {
+        if (!ts) { lastUpdatedEl.innerText = 'Ещё не обновлялось'; return; }
+        const d = new Date(ts);
+        const pad = n => String(n).padStart(2, '0');
+        lastUpdatedEl.innerText = `Обновлено: ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
 
-            //  Визуальный отклик в самом попапе
-            status.innerHTML = `<span style="color: #FF4D4D;">🪄 Данные стерты</span>`;
-            
-            // Окно НЕ закрываем, просто убираем надпись через 3 секунды
+    // Обновлять время каждую секунду пока попап открыт
+    const ticker = setInterval(() => {
+        chrome.storage.local.get(['lastUpdated'], (res) => showLastUpdated(res.lastUpdated));
+    }, 1000);
+    window.addEventListener('unload', () => clearInterval(ticker));
+
+    // Очистка
+    clearBtn.onclick = () => {
+        chrome.storage.local.set({ skyData: {} }, () => {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                if (tabs[0]) chrome.tabs.reload(tabs[0].id);
+            });
+            status.innerHTML = `<span style="color:#FF4D4D;">🪄 Данные стерты</span>`;
             setTimeout(() => { status.innerHTML = ''; }, 3000);
         });
     };
 
-    // Запуск сканирования (сигнал в background.js)
+    // Ручное обновление - просто сигнал в content.js, никаких вкладок
     startBtn.onclick = () => {
-        chrome.runtime.sendMessage({ action: "scansSubjectsManual" });
-        status.innerHTML = `<span style="color: #3291FF;">🚀 Сбор запущен (20 сек)...</span>`;
+        chrome.tabs.query({ url: "*://avatar.skyeng.ru/*" }, (tabs) => {
+            tabs.forEach(t => chrome.tabs.sendMessage(t.id, { action: "manualScan" }));
+        });
+        status.innerHTML = `<span style="color:#3291FF;">🔄 Обновляем...</span>`;
+        setTimeout(() => { status.innerHTML = ''; }, 3000);
     };
 
-    // ПЕРЕКЛЮЧАТЕЛИ
-    toggleStats.onchange = () => {
-        chrome.storage.local.set({ 'showStats': toggleStats.checked }, refreshContent);
-    };
-
-    toggleNews.onchange = () => {
-        chrome.storage.local.set({ 'showNews': toggleNews.checked }, refreshContent);
-    };
-
-    // ИСПРАВЛЕНО: Добавил этот обработчик
-    toggleNative.onchange = () => {
-        chrome.storage.local.set({ 'showNative': toggleNative.checked }, refreshContent);
-    };
+    // Переключатели
+    toggleStats.onchange = () => chrome.storage.local.set({ showStats: toggleStats.checked }, refreshContent);
+    toggleNews.onchange = () => chrome.storage.local.set({ showNews: toggleNews.checked }, refreshContent);
+    toggleNative.onchange = () => chrome.storage.local.set({ showNative: toggleNative.checked }, refreshContent);
+    toggleRabbit.onchange = () => chrome.storage.local.set({ showRabbit: toggleRabbit.checked }, refreshContent);
 
     fontSel.onchange = () => {
         const val = fontSel.value;
-        chrome.storage.local.set({ 'selectedFont': val }, () => {
-            chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        chrome.storage.local.set({ selectedFont: val }, () => {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 if (tabs[0]) chrome.tabs.sendMessage(tabs[0].id, { action: "changeFont", font: val });
             });
         });
     };
 
     function refreshContent() {
-        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs[0]) chrome.tabs.sendMessage(tabs[0].id, { action: "refreshUI" });
         });
     }

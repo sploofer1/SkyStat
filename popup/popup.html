@@ -4,96 +4,250 @@
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-dark: #121922;
-            --card-dark: #1C2533;
-            --sky-blue: #3291FF;
-            --sky-green: #2ecc71;
-            --text-main: #FFFFFF;
-            --text-dim: #99AABB;
-            --border: rgba(255, 255, 255, 0.08);
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            width: 268px;
+            font-family: 'Inter', sans-serif;
+            background: #0d0d0d;
+            color: #fff;
         }
-        body { 
-            width: 260px; padding: 0; margin: 0; 
-            background: var(--bg-dark); color: var(--text-main); 
-            font-family: 'Inter', sans-serif; 
-        }
+
+        /*  Шапка  */
         .header {
-            background: var(--card-dark);
-            padding: 16px; text-align: center;
-            font-weight: 700; font-size: 15px;
-            border-bottom: 1px solid var(--border);
-            color: var(--sky-blue);
-            letter-spacing: 0.5px;
+            padding: 16px 18px 14px;
+            border-bottom: 1px solid #1a1a1a;
+            position: relative;
+            overflow: hidden;
         }
-        .container { padding: 16px; }
-        .info-card {
-            background: rgba(50, 145, 255, 0.1); border-radius: 12px;
-            padding: 12px; margin-bottom: 16px;
-            font-size: 11px; color: var(--sky-blue); line-height: 1.5;
-            border: 1px solid rgba(50, 145, 255, 0.2);
+        .header-glow {
+            position: absolute;
+            top: -30px; left: 50%;
+            transform: translateX(-50%);
+            width: 140px; height: 60px;
+            background: radial-gradient(ellipse, rgba(0,210,110,0.18) 0%, transparent 70%);
+            pointer-events: none;
         }
-        button { 
-            width: 100%; padding: 12px; cursor: pointer; border: none; 
-            border-radius: 10px; font-weight: 600; font-size: 13px;
-            margin-bottom: 10px; transition: all 0.2s ease;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
         }
-        #startScan { 
-            background: var(--sky-blue); color: white;
+        .header-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: #fff;
         }
-        #startScan:hover { background: #0070F3; transform: translateY(-1px); }
-        #clearData { background: rgba(255, 77, 77, 0.1); color: #FF4D4D; }
-        #clearData:hover { background: rgba(255, 77, 77, 0.2); }
-        
-        .control-row { 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 12px 0; border-top: 1px solid var(--border); margin-top: 8px;
+        .header-title span {
+            color: #00d26e;
         }
-        .label { font-size: 13px; font-weight: 500; color: var(--text-dim); }
-        
-        select { 
-            background: var(--card-dark); border: 1px solid var(--border); 
-            color: white; border-radius: 8px; padding: 6px; width: 120px; outline: none;
-            cursor: pointer; font-size: 12px;
+        .header-ver {
+            font-size: 10px;
+            color: #333;
+            font-weight: 500;
+            background: #1a1a1a;
+            padding: 2px 7px;
+            border-radius: 20px;
         }
 
-        .switch { position: relative; width: 40px; height: 22px; }
+        /*  Статус  */
+        .update-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: #111;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .pulse-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #00d26e;
+            flex-shrink: 0;
+            animation: pulse 2.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+        #lastUpdated {
+            font-size: 11px;
+            color: #444;
+            font-weight: 500;
+        }
+
+        /*  Кнопки  */
+        .btn-group {
+            padding: 14px 18px;
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .btn {
+            flex: 1;
+            padding: 9px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.2px;
+        }
+        .btn-primary {
+            background: #00d26e;
+            color: #000;
+        }
+        .btn-primary:hover { background: #00e87a; transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-danger {
+            background: #1a1a1a;
+            color: #ff5555;
+            border: 1px solid #2a1a1a;
+        }
+        .btn-danger:hover { background: #221515; }
+
+        /* ── Секции ── */
+        .section-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #2a2a2a;
+            text-transform: uppercase;
+            padding: 12px 18px 4px;
+        }
+
+        /*  Тумблеры  */
+        .toggles { padding: 0 18px 8px; }
+        .control-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #141414;
+        }
+        .control-row:last-child { border-bottom: none; }
+        .label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #666;
+        }
+        .switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { 
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; 
-            background-color: #334155; transition: .3s; border-radius: 34px; 
+        .slider {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #1e1e1e;
+            border-radius: 20px;
+            transition: .2s;
+            border: 1px solid #2a2a2a;
         }
-        .slider:before { 
-            position: absolute; content: ""; height: 16px; width: 16px; 
-            left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; 
+        .slider:before {
+            position: absolute; content: "";
+            height: 14px; width: 14px;
+            left: 2px; bottom: 2px;
+            background: #333;
+            border-radius: 50%;
+            transition: .2s;
         }
-        input:checked + .slider { background-color: var(--sky-blue); }
-        input:checked + .slider:before { transform: translateX(18px); }
+        input:checked + .slider { background: #003d20; border-color: #005a2e; }
+        input:checked + .slider:before { transform: translateX(16px); background: #00d26e; }
 
-        #status { 
-            margin-top: 8px; font-size: 12px; text-align: center; 
-            font-weight: 500; min-height: 32px; 
+        /*  Шрифт  */
+        .font-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 18px 14px;
+            border-top: 1px solid #141414;
         }
-        .footer { 
-            padding: 12px; font-size: 11px; color: var(--text-dim); 
-            text-align: center; background: var(--card-dark);
-            opacity: 0.6;
-            letter-spacing: 0.5px;
+        select {
+            background: #1a1a1a;
+            border: 1px solid #252525;
+            color: #666;
+            border-radius: 7px;
+            padding: 5px 8px;
+            width: 128px;
+            outline: none;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.15s;
         }
+        select:focus { border-color: #00d26e44; }
+
+        /*  Статус сообщение  */
+        #status {
+            font-size: 11px;
+            text-align: center;
+            font-weight: 500;
+            min-height: 18px;
+            padding: 0 18px 10px;
+            color: #333;
+        }
+
+        /*  Футер  */
+        .footer {
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid #141414;
+        }
+        .footer-left {
+            font-size: 10px;
+            color: #2a2a2a;
+            letter-spacing: 0.3px;
+        }
+        .footer-left b { color: #3a3a3a; }
+        .github-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #333;
+            background: #161616;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 4px 9px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+        .github-btn:hover {
+            color: #fff;
+            border-color: #333;
+            background: #1e1e1e;
+        }
+        .github-btn svg { flex-shrink: 0; }
     </style>
 </head>
 <body>
-    <div class="header">SKY STAT</div>
-    <div class="container">
-        <div class="info-card" id="statusBox">
-            ⚡ Скан: 20 сек.<br>
-            ⚠️ <b>Не закрывайте браузер</b>
+
+    <div class="header">
+        <div class="header-glow"></div>
+        <div class="header-top">
+            <div class="header-title">SKY<span>PLUS</span></div>
+            <div class="header-ver" id="ver"></div>
         </div>
-        
-        <button id="startScan">Обновить статистику</button>
-        <button id="clearData">Очистить данные</button>
-        
+    </div>
+
+    <div class="update-row">
+        <div class="pulse-dot"></div>
+        <span id="lastUpdated">Загрузка...</span>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-primary" id="startScan">↺ Обновить</button>
+        <button class="btn btn-danger" id="clearData">⌫ Сбросить</button>
+    </div>
+
+    <div class="section-label">Отображение</div>
+    <div class="toggles">
         <div class="control-row">
             <span class="label">Плашки</span>
             <label class="switch">
@@ -101,7 +255,6 @@
                 <span class="slider"></span>
             </label>
         </div>
-
         <div class="control-row">
             <span class="label">Новости</span>
             <label class="switch">
@@ -109,7 +262,6 @@
                 <span class="slider"></span>
             </label>
         </div>
-
         <div class="control-row">
             <span class="label">Оригинальные кружочки</span>
             <label class="switch">
@@ -117,24 +269,40 @@
                 <span class="slider"></span>
             </label>
         </div>
-
         <div class="control-row">
-            <span class="label">Шрифт</span>
-            <select id="fontSelect">
-                <option value="inherit">Стандартный</option>
-                <option value="'Inter', sans-serif">Inter (Modern)</option>
-                <option value="'Comfortaa', cursive">Comfortaa (Soft)</option>
-                <option value="'Kelly Slab', cursive">Kelly Slab (Tech)</option>
-                <option value="'Neucha', cursive">Neucha (Hand)</option>
-                <option value="'Caveat', cursive">Caveat (Script)</option>
-            </select>
+            <span class="label">Фоновый фонарик</span>
+            <label class="switch">
+                <input type="checkbox" id="toggleRabbit" checked>
+                <span class="slider"></span>
+            </label>
         </div>
-        <div id="status"></div>
-    </div>
-    <div class="footer">
-        made by sploofer <span id="ver"></span>
     </div>
 
-    <script src="popup.js"></script>
+    <div class="section-label">Шрифт</div>
+    <div class="font-row">
+        <span class="label">Стиль</span>
+        <select id="fontSelect">
+            <option value="inherit">Стандартный</option>
+            <option value="'Inter', sans-serif">Inter</option>
+            <option value="'Comfortaa', cursive">Comfortaa</option>
+            <option value="'Kelly Slab', cursive">Kelly Slab</option>
+            <option value="'Neucha', cursive">Neucha</option>
+            <option value="'Caveat', cursive">Caveat</option>
+        </select>
+    </div>
+
+    <div id="status"></div>
+
+    <div class="footer">
+        <span class="footer-left">made by <b>sploofer</b></span>
+        <a class="github-btn" href="https://github.com/sploofer1/SkyStat" target="_blank">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            GitHub
+        </a>
+    </div>
+
+<script src="popup.js"></script>
 </body>
 </html>
