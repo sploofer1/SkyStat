@@ -49,7 +49,7 @@ Skyeng и Skypro - хорошие платформы, но в них есть в
 
 ## Установка
 
-1. Скачай архив из раздела [Releases](https://github.com/sploofer1/SkyStat/releases)
+1. Скачай архив из раздела [Releases](https://github.com/sploofer1/SkyPlus/releases)
 2. Распакуй его
 3. Открой `chrome://extensions/`
 4. Включи "Режим разработчика" в правом верхнем углу
