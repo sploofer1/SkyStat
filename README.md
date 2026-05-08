@@ -4,7 +4,7 @@
 
 **Расширение для avatar.skyeng.ru плашки статистики, Google Calendar и полная кастомизация интерфейса**
 
-![version](https://img.shields.io/badge/version-2.2-00d26e?style=flat-square&labelColor=0d0d0d)
+![version](https://img.shields.io/badge/version-3.3-00d26e?style=flat-square&labelColor=0d0d0d)
 ![license](https://img.shields.io/badge/license-MIT-00d26e?style=flat-square&labelColor=0d0d0d)
 ![platform](https://img.shields.io/badge/Chrome-Extension-00d26e?style=flat-square&labelColor=0d0d0d)
 
